@@ -1474,28 +1474,23 @@ def exercise_logger():
                 status_text = "Complete!"
             elif st.session_state.timer_running:
                 timer_color = "#ff9800"  # Orange when running
-                status_text = "Running..."
+                status_text = f"Running... ({mins}:{secs:02d})"
             else:
                 timer_color = "#1976d2"  # Blue when ready
-                status_text = "Ready"
+                status_text = "Ready to Start"
             
             st.markdown(f"""
             <div style='text-align: center; padding: 30px; background: linear-gradient(135deg, {timer_color} 0%, {timer_color}dd 100%); 
                         border-radius: 15px; color: white; margin: 20px 0; box-shadow: 0 8px 20px rgba(0,0,0,0.3);'>
-                <h1 style='font-size: 4em; margin: 0; font-weight: bold;'>{mins:02d}:{secs:02d}</h1>
+                <h1 style='font-size: 4em; margin: 0; font-weight: bold;'>{mins}:{secs:02d}</h1>
                 <p style='font-size: 1.5em; margin-top: 10px;'>{status_text}</p>
             </div>
             """, unsafe_allow_html=True)
             
-            # Auto-refresh script when timer is running
-            if st.session_state.timer_running:
-                st.markdown("""
-                <script>
-                    setTimeout(function() {
-                        window.parent.location.reload();
-                    }, 1000);
-                </script>
-                """, unsafe_allow_html=True)
+            # Auto-refresh when timer is running - use st.rerun() instead of JavaScript
+            if st.session_state.timer_running and st.session_state.timer_seconds_left > 0:
+                time.sleep(1)  # Wait 1 second
+                st.rerun()  # Refresh to show new time
             
             # Show completion message
             if st.session_state.timer_seconds_left == 0 and st.session_state.timer_total > 0 and not st.session_state.timer_running:
